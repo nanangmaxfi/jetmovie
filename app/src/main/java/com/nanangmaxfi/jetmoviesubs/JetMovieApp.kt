@@ -13,13 +13,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.nanangmaxfi.jetmoviesubs.ui.navigation.NavigationItem
 import com.nanangmaxfi.jetmoviesubs.ui.navigation.Screen
+import com.nanangmaxfi.jetmoviesubs.ui.screen.detail.DetailMovieScreen
+import com.nanangmaxfi.jetmoviesubs.ui.screen.favorite.FavoriteScreen
 import com.nanangmaxfi.jetmoviesubs.ui.screen.home.HomeScreen
+import com.nanangmaxfi.jetmoviesubs.ui.screen.profile.ProfileScreen
 import com.nanangmaxfi.jetmoviesubs.ui.theme.JetMovieSubsTheme
 
 @Composable
@@ -45,8 +50,28 @@ fun JetMovieApp(
         ){
             composable(Screen.Home.route){
                 HomeScreen(
-                    navigateToDetail = { rewardId ->
-                        navController.navigate(Screen.DetailMovie.createRoute(rewardId))
+                    navigateToDetail = { movieId ->
+                        navController.navigate(Screen.DetailMovie.createRoute(movieId))
+                    }
+                )
+            }
+            composable(Screen.Favorite.route){
+                FavoriteScreen(navigateToDetail = {movieId->
+                    navController.navigate(Screen.DetailMovie.createRoute(movieId))
+                })
+            }
+            composable(Screen.Profile.route) {
+                ProfileScreen()
+            }
+            composable(
+                route = Screen.DetailMovie.route,
+                arguments = listOf(navArgument("movieId") { type = NavType.LongType })
+            ){
+                val id = it.arguments?.getLong("movieId") ?: -1L
+                DetailMovieScreen(
+                    movieId = id,
+                    navigateBack = {
+                        navController.navigateUp()
                     }
                 )
             }
@@ -73,12 +98,12 @@ fun BottomBar(
             NavigationItem(
                 title = stringResource(R.string.menu_favorite),
                 icon = Icons.Filled.Favorite,
-                screen = Screen.Home
+                screen = Screen.Favorite
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_profile),
                 icon = Icons.Default.AccountCircle,
-                screen = Screen.Home
+                screen = Screen.Profile
             )
         )
         BottomNavigation {
