@@ -23,14 +23,4 @@ class FavoriteViewModel(private val repository: MovieRepository) : ViewModel() {
         }
     }
 
-    fun updateFavoriteMovie(movieId: Long, isFavorite: Boolean){
-        viewModelScope.launch{
-            repository.updateFavoriteMovie(movieId, isFavorite)
-                .collect{ isUpdate ->
-                    if(isUpdate){
-                        getAllFavoriteMovies()
-                    }
-                }
-        }
-    }
 }
